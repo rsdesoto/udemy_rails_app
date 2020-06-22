@@ -1,6 +1,6 @@
 class ArticlesController < ApplicationController
   def show
-    @article = Article.find(params[:id])
+    set_article
   end
 
   def index
@@ -11,12 +11,12 @@ class ArticlesController < ApplicationController
   end
 
   def edit
-    @article = Article.find(params[:id])
+    set_article
   end
 
   def create
     # require the top level key article, then permit the subkeys title and desc
-    @article = Article.new(params.require(:article).permit(:title, :description))
+    @article = Article.new(permissions)
     if @article.save
       flash[:notice] = "Article was created successfully."
       redirect_to article_path(@article)
@@ -26,8 +26,8 @@ class ArticlesController < ApplicationController
   end
 
   def update
-    @article = Article.find(params[:id])
-    if @article.update(params.require(:article).permit(:title, :description))
+    set_article
+    if @article.update(permissions)
       flash[:notice] = "Article was updated successfully."
       redirect_to article_path(@article)
     else
@@ -36,8 +36,18 @@ class ArticlesController < ApplicationController
   end
 
   def destroy
-    @article = Article.find(params[:id])
+    set_article
     @article.destroy
     redirect_to articles_path
+  end
+
+  private
+
+  def set_article
+    @article = Article.find(params[:id])
+  end
+
+  def permissions
+    params.require(:article).permit(:title, :description)
   end
 end
