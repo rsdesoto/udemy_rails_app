@@ -17,6 +17,7 @@ class ArticlesController < ApplicationController
   def create
     # require the top level key article, then permit the subkeys title and desc
     @article = Article.new(permissions)
+    @article.user = User.first
     if @article.save
       flash[:notice] = "Article was created successfully."
       redirect_to article_path(@article)
